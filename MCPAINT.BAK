@@ -26,11 +26,12 @@ struct canvas
 
 int main()
 {
+	char ch;
 	int gdriver, gmode;
-	int button, x, y, midx, midy;
+	int button, x, y, midx, midy, modex, modey, cirx, ciry;
 	int brushsize, brushcolor, erasersize, erasercolor;
-	int ind;
-	char mode[10];
+	int ind, score;
+	char comm[10], mode[10];
 	struct canvas c;
 
 	clrscr();
@@ -46,6 +47,10 @@ int main()
 	x = y = 0;
 	midx = getmaxx()/2;
 	midy = getmaxy()/2;
+	modex = getmaxx()-50;
+	modey = getmaxy()-50;
+	cirx = getmaxx()-30;
+	ciry = getmaxy()-15;
 	c.x1 = midx-250;
 	c.y1 = midy-100;
 	c.x2 = midx+250;
@@ -68,10 +73,10 @@ int main()
 				if(((c.x1+5<x)&&(x<c.x2-5)) && ((c.y1+5<y)&&(y<c.y2-5)))
 				{
 					setcolor(BLACK);
-					outtextxy(getmaxx()-50, getmaxy()-50, mode);
+					outtextxy(modex, modey, mode);
 					setcolor(RED);
 					strcpy(mode, (button==1)?"Paint":"Erase");
-					outtextxy(getmaxx()-50, getmaxy()-50, mode);
+					outtextxy(modex, modey, mode);
 					if(button==1)
 						paint(x, y, brushsize, brushcolor);
 					else
@@ -87,15 +92,35 @@ int main()
 			{
 				++brushcolor;
 				if((brushcolor==BLINK) || (brushcolor==BLACK))
-					brushcolor = (rand() % 10)+1;
+					brushcolor = 1;
 				setcolor(brushcolor);
-				setfillstyle(SOLID_FILL, brushcolor);
-				circle(getmaxx()-30, getmaxy()-15, 8);
-				floodfill(getmaxx()-30, getmaxy()-15, brushcolor);
+				circle(cirx, ciry, 8);
+				circle(cirx, ciry, 6);
 			}
 		}
 	}
-	getch();
+	restorecrtmode();
+	while(1)
+	{
+		ch = getchar();
+		printf("> ");
+		scanf("%s", comm);
+		if(strcmp(comm, "submit") == 0)
+		{
+			score = rand() % 10;
+			if(0 <= score <= 3)
+				puts("Practice make things perfect! :)");
+			else if(3 < score <= 6)
+				puts("Beautiful picture! :0");
+			else if(6 < score <= 8)
+				puts("Incredible Art!!!");
+			else
+				puts("Masterpiece!");
+			printf("%c", ch);
+		}
+		else if(strcmp(comm, "exit") == 0)
+			break;
+	}
 	closegraph();
 	return 0;
 }
