@@ -35,6 +35,7 @@ int main()
 	struct canvas c;
 
 	clrscr();
+	srand((unsigned int)time(NULL));	/* seeding random number */
 	gdriver = DETECT;
 	initgraph(&gdriver, &gmode, "C:\\TURBOC3\\BGI");
 	if(initmouse() == 0)
@@ -47,10 +48,13 @@ int main()
 	x = y = 0;
 	midx = getmaxx()/2;
 	midy = getmaxy()/2;
+	/* current mode coordinates */
 	modex = getmaxx()-50;
 	modey = getmaxy()-50;
+	/* color picker coordinates */
 	cirx = getmaxx()-30;
 	ciry = getmaxy()-15;
+	/* canvas coordinates */
 	c.x1 = midx-250;
 	c.y1 = midy-100;
 	c.x2 = midx+250;
@@ -68,7 +72,7 @@ int main()
 		if(button != 0)
 		{
 			setcolor(RED);
-			if((button==1) || (button==2))
+			if((button==1) || (button==2))	/* for left/right click */
 			{
 				if(((c.x1+5<x)&&(x<c.x2-5)) && ((c.y1+5<y)&&(y<c.y2-5)))
 				{
@@ -88,7 +92,7 @@ int main()
 					outtextxy(getmaxx()-50, getmaxy()-50, mode);
 				}
 			}
-			else
+			else	/* for middle mouse click */
 			{
 				++brushcolor;
 				if((brushcolor==BLINK) || (brushcolor==BLACK))
@@ -100,6 +104,7 @@ int main()
 		}
 	}
 	restorecrtmode();
+	score = rand() % 10;	/* emulating score */
 	while(1)
 	{
 		ch = getchar();
@@ -107,19 +112,27 @@ int main()
 		scanf("%s", comm);
 		if(strcmp(comm, "submit") == 0)
 		{
-			score = rand() % 10;
-			if(0 <= score <= 3)
+			if((0 <= score) && (score <= 3))
 				puts("Practice make things perfect! :)");
-			else if(3 < score <= 6)
+			else if((3 < score) && (score <= 6))
 				puts("Beautiful picture! :0");
-			else if(6 < score <= 8)
+			else if((6 < score) && (score <= 8))
 				puts("Incredible Art!!!");
 			else
 				puts("Masterpiece!");
-			printf("%c", ch);
+			printf("Rating: %d/10%c", score, ch);
 		}
+		else if(strcmp(comm, "help") == 0)
+			printf(
+			"submit\t\tsubmit art\n"
+			"exit\t\texit program\n");
 		else if(strcmp(comm, "exit") == 0)
 			break;
+		else
+		{
+			printf("%s: command not found\n", comm);
+			puts("enter 'help' to list commands");
+		}
 	}
 	closegraph();
 	return 0;
@@ -137,6 +150,7 @@ void initdisplay(int midx, int midy, struct canvas c)
 	char quest[20];
 	char item[][15] = {"Scenery", "Apple", "Watermelon", "Cat", "Tree",
 			"Man", "Flower", "Dog", "Bee", "Football"};
+
 	/*displaying logo*/
 	setcolor(LIGHTCYAN);
 	settextstyle(BOLD_FONT, HORIZ_DIR, 2);
